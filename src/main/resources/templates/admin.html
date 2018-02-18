@@ -46,15 +46,15 @@
         </thead>
         <tbody id="tb">
         <!--<tr data-th-each="coin : ${coins}" th:if="${coin.active}==1">-->
-            <!--<td></td>-->
-            <!--<td class="message" data-th-text="${coin.rank}"></td>-->
-            <!--<td class="message" data-th-text="${coin.name}" th:id="${coin.id}"></td>-->
-            <!--<td class="message" data-th-text="${coin.description}"></td>-->
-            <!--<td class="message"><a th:onclick="'edit('+${coin.id}+')'" href="#"><img src="/dist/svg/wrench.svg"/></a>-->
-            <!--</td>-->
-            <!--&lt;!&ndash;<td class="message"><a th:href="'remove_shop/'+${advert.id}"  data-toggle="modal" data-target="#mailModal"><span class="glyphicon glyphicon-floppy-remove"></span></a></td>&ndash;&gt;-->
-            <!--<td class="message"><a href="#" th:onclick="'show('+${coin.id}+')'"><img src="/dist/svg/delete.svg"-->
-                                                                                     <!--alt="icon name"/></a></td>-->
+        <!--<td></td>-->
+        <!--<td class="message" data-th-text="${coin.rank}"></td>-->
+        <!--<td class="message" data-th-text="${coin.name}" th:id="${coin.id}"></td>-->
+        <!--<td class="message" data-th-text="${coin.description}"></td>-->
+        <!--<td class="message"><a th:onclick="'edit('+${coin.id}+')'" href="#"><img src="/dist/svg/wrench.svg"/></a>-->
+        <!--</td>-->
+        <!--&lt;!&ndash;<td class="message"><a th:href="'remove_shop/'+${advert.id}"  data-toggle="modal" data-target="#mailModal"><span class="glyphicon glyphicon-floppy-remove"></span></a></td>&ndash;&gt;-->
+        <!--<td class="message"><a href="#" th:onclick="'show('+${coin.id}+')'"><img src="/dist/svg/delete.svg"-->
+        <!--alt="icon name"/></a></td>-->
         <!--</tr>-->
         </tbody>
     </table>
@@ -101,14 +101,40 @@
     </div>
 </div>
 
+<div id="img" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Edit image</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="img_tag"></div>
+                <form method="POST" enctype="multipart/form-data" id="fileUploadForm">
+                    <div class="pull-center">
+                        <div id="img_id"></div>
+                        <input type="file" name="file" id="file" class="btn btn-mini  btn-primary"
+                               style="display:inline; padding: 2px 1px;"/>
+                    </div>
+                    <br/>
+                </form>
+                <a href="#" onclick="save_img()" class="btn btn-success">&#128190;&nbsp;Save</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div id="infoModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title text-center">Warning</h2>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <h4 class="modal-title text-center">Delete coin?</h4><br/>
@@ -140,7 +166,7 @@
 
     function show(id) {
         pos = id;
-        $('#infoModal').modal('show');
+        $('#coin').modal('show');
     }
 
     function confirm() {
@@ -153,21 +179,57 @@
     }
 
     function getAllCoins() {
+        console.log("update");
         $.get("getAllCoins", function (data, status) {
             $("#tb").html("");
             for (i = 0; i < data.length; i++) {
                 if (data[i].active == 1) {
 
                     $(" <tr>"
-                        + "<td width=\"10%\"></td>"
+                        + "<td width=\"10%\"><a href=\"#\" onclick=\"edit_img(" + data[i].id + ")\"><img src=\"/image/" + data[i].id + "\" width=\"50\" height=\"50\"></a></td>"
                         + "<td width=\"5%\" class=\"message\">" + data[i].id + "</td >"
                         + "<td width=\"10%\" class=\"message\">" + data[i].name + "</td>"
                         + "<td width=\"65%\" class=\"message\">" + data[i].description + "</td>"
                         + "<td width=\"5%\" class=\"message\"><a onclick=\"edit(" + data[i].id + ")\" href=\"#\"><img src=\"/dist/svg/wrench.svg\"/></a></td>"
-                        + "<td width=\"5%\" class=\"message\"><a href=\"#\" onclick=\"show("+data[i].id+")\"><img src=\"/dist/svg/delete.svg\" alt=\"icon name\"/></a></td>"
+                        + "<td width=\"5%\" class=\"message\"><a href=\"#\" onclick=\"show(" + data[i].id + ")\"><img src=\"/dist/svg/delete.svg\" alt=\"icon name\"/></a></td>"
                         + "</tr>"
                     ).appendTo("#tb");
                 }
+            }
+        });
+    }
+
+    function edit_img(id) {
+        $("#img_tag").html("");
+        $("#img_id").html("");
+        $("<img src=\"/image/" + id + "\" >").appendTo("#img_tag");
+        $("<input class=\"form-control\" type=\"hidden\" name=\"id\" value=\"" + id + "\" required/>").appendTo("#img_id");
+        $('#img').modal('show');
+    }
+
+    function save_img() {
+        var form = $('#fileUploadForm')[0];
+
+        var data = new FormData(form);
+
+
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/upload_img",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                $('#img').modal('hide');
+                $("#tb").html("");
+                getAllCoins();
+
+            },
+            error: function (e) {
+                $('#img').modal('hide');
             }
         });
     }

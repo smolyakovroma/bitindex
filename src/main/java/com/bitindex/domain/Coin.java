@@ -23,5 +23,7 @@ public class Coin {
     private String description;
     private int rank;
     private int active;
+    @Lob
+    private byte[] pic;
 
 }
