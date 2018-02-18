@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+
+    <title>BitIndex</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body onload="update_form()">
+
+<div class="container pull-center">
+    <br/><br/><br/>
+    <h1>EDIT <a href="/">BITINDEX</a></h1>
+    <button class="btn btn-info float-right" onclick="add()">Add coin</button>
+    <br/>
+    <table class="table table-striped" id="posts_list">
+        <thead>
+        <tr>
+            <th width="10%">IMG</th>
+            <th width="5%">#</th>
+            <th width="10%">Name</th>
+            <th width="65%">Description</th>
+            <th width="5%"><img src="/dist/svg/wrench.svg"/></th>
+            <th width="5%"><img src="/dist/svg/delete.svg" alt="icon name"/></th>
+        </tr>
+        </thead>
+        <tbody id="tb">
+        <!--<tr data-th-each="coin : ${coins}" th:if="${coin.active}==1">-->
+            <!--<td></td>-->
+            <!--<td class="message" data-th-text="${coin.rank}"></td>-->
+            <!--<td class="message" data-th-text="${coin.name}" th:id="${coin.id}"></td>-->
+            <!--<td class="message" data-th-text="${coin.description}"></td>-->
+            <!--<td class="message"><a th:onclick="'edit('+${coin.id}+')'" href="#"><img src="/dist/svg/wrench.svg"/></a>-->
+            <!--</td>-->
+            <!--&lt;!&ndash;<td class="message"><a th:href="'remove_shop/'+${advert.id}"  data-toggle="modal" data-target="#mailModal"><span class="glyphicon glyphicon-floppy-remove"></span></a></td>&ndash;&gt;-->
+            <!--<td class="message"><a href="#" th:onclick="'show('+${coin.id}+')'"><img src="/dist/svg/delete.svg"-->
+                                                                                     <!--alt="icon name"/></a></td>-->
+        <!--</tr>-->
+        </tbody>
+    </table>
+</div>
+
+
+<div id="coin" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Coin</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" class="form-control" id="id" name="id" required/>
+                <label for="name">Name</label>
+                <input class="form-control" id="name" name="name" required/>
+                <br/>
+                <label for="title">Title</label>
+                <input class="form-control" id="title" name="title" required maxlength="4"/>
+                <br/>
+                <label for="description">Description</label>
+                <textarea cols="40" rows="3" required class="form-control" id="description"
+                          name="description"></textarea>
+                <br/>
+                <label for="rank">Rank</label>
+                <input class="form-control" id="rank" name="rank" type="number"
+                       required/>
+                <br/>
+                <label for="active">Active (0 - OFF / 1 - ON)</label>
+                <input class="form-control" id="active" name="active" type="number"
+                       required/>
+                <br/>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning btn-left" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-success btn-right" onclick="save()" type="button" data-dismiss="modal">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="infoModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center">Warning</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-title text-center">Delete coin?</h4><br/>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning btn-left" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-success btn-right" onclick="confirm()" type="button" data-dismiss="modal">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var pos;
+
+    function edit(id) {
+        $.get("getCoin/" + id, function (data, status) {
+            $("#id").val(data.id);
+            $("#name").val(data.name);
+            $("#title").val(data.title);
+            $("#description").val(data.description);
+            $("#rank").val(data.rank);
+            $("#active").val(data.active);
+            $('#coin').modal('show');
+        });
+    }
+
+    function show(id) {
+        pos = id;
+        $('#infoModal').modal('show');
+    }
+
+    function confirm() {
+        if (pos >= 0) {
+
+            $.get("remove/" + pos, function (data, status) {
+                getAllCoins();
+            });
+        }
+    }
+
+    function getAllCoins() {
+        $.get("getAllCoins", function (data, status) {
+            $("#tb").html("");
+            for (i = 0; i < data.length; i++) {
+                if (data[i].active == 1) {
+
+                    $(" <tr>"
+                        + "<td width=\"10%\"></td>"
+                        + "<td width=\"5%\" class=\"message\">" + data[i].id + "</td >"
+                        + "<td width=\"10%\" class=\"message\">" + data[i].name + "</td>"
+                        + "<td width=\"65%\" class=\"message\">" + data[i].description + "</td>"
+                        + "<td width=\"5%\" class=\"message\"><a onclick=\"edit(" + data[i].id + ")\" href=\"#\"><img src=\"/dist/svg/wrench.svg\"/></a></td>"
+                        + "<td width=\"5%\" class=\"message\"><a href=\"#\" onclick=\"show("+data[i].id+")\"><img src=\"/dist/svg/delete.svg\" alt=\"icon name\"/></a></td>"
+                        + "</tr>"
+                    ).appendTo("#tb");
+                }
+            }
+        });
+    }
+
+    function save() {
+        $.post("edit_coin",
+            {
+                id: $("#id").val(),
+                name: $("#name").val(),
+                title: $("#title").val(),
+                description: $("#description").val(),
+                rank: $("#rank").val(),
+                active: $("#active").val()
+            },
+            function (data, status) {
+                getAllCoins();
+            });
+    }
+
+    function update_form() {
+        getAllCoins();
+    }
+
+    function add() {
+        $("#id").val(0);
+        $("#name").val("");
+        $("#title").val("");
+        $("#description").val("");
+        $("#rank").val("");
+        $("#active").val(1);
+        $('#coin').modal('show');
+    }
+</script>
+</body>
+</html>

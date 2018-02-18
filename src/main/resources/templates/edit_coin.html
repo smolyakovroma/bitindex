@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+
+    <title>BitIndex</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div class="container pull-center">
+    <form method="post" name="edit_coin" id="edit_coin" action="/edit_coin" role="form">
+        <div class="form-group">
+            <input type="hidden" th:value="${coin.id}" class="form-control" id="id" name="id" required/>
+            <label for="name">Name</label>
+            <input th:value="${coin.name}" class="form-control" id="name" name="name" required/>
+            <br/>
+            <label for="description">Description</label>
+            <input th:value="${coin.description}" class="form-control" id="description" name="description"
+                   required/>
+            <br/>
+            <label for="rank">Rank</label>
+            <input th:value="${coin.rank}" class="form-control" id="rank" name="rank"
+                   required/>
+            <br/>
+            <label for="active">Active</label>
+            <input th:value="${coin.active}" class="form-control" id="active" name="active"
+                   required/>
+            <br/>
+            <button type="submit" id="submit" class="btn btn-primary pull-right">Save</button>
+            <br/>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
