@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +14,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -42,7 +42,8 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#"><img src="/dist/brand/bootstrap-solid.svg" width="30" height="30" alt="">&nbsp;BitIndex100</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -64,8 +65,42 @@
 </nav>
 <div class="container">
     <div class="starter-template">
-        <h1>Top 100 cryptocoins</h1>
-        <p class="lead"><canvas id="myChart" width="400" height="200"></canvas></p>
+        <h1>Top 100 cryptocoins</h1><br/>
+        <div id="rate"></div>
+        <br/><br/>
+        <p class="lead">
+            <canvas id="myChart" width="400" height="200"></canvas>
+        </p>
+        <div class="btn-group btn-group-toggle float-left" data-toggle="buttons">
+
+            <label class="btn btn-secondary btn-sm" onclick="updatePeriod('month')">
+                <input type="radio" name="month" id="month" autocomplete="off" > month
+            </label>
+            <label class="btn btn-secondary btn-sm" onclick="updatePeriod('week')">
+                <input type="radio" name="week" id="week" autocomplete="off"> 7 day
+            </label>
+            <x></x>
+            <label class="btn btn-secondary active btn-sm" onclick="updatePeriod('day')">
+                <input type="radio" name="day" id="day" autocomplete="off" checked > 1 day
+            </label>
+
+        </div>
+        <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+            <label class="btn btn-secondary active btn-sm" onclick="updateCur('usd')">
+                <input type="radio" name="usd" id="usd" autocomplete="off" checked > USD
+            </label>
+            <label class="btn btn-secondary btn-sm" onclick="updateCur('rub')">
+                <input type="radio" name="rub" id="rub"  autocomplete="off"> RUB
+            </label>
+            <!--<x></x>-->
+            <!--<label class="btn btn-secondary btn-sm">-->
+            <!--<input type="radio" name="options" id="option3" autocomplete="off"> EUR-->
+            <!--</label>-->
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <div id="cards">
         </div>
     </div>
@@ -74,50 +109,89 @@
 
 
 <script>
+    var period = "day"
+    var cur= "usd";
+
+    function updateCur(_cur){
+        cur = _cur;
+        updateGraph();
+    }
+
+    function updatePeriod(_period){
+        period = _period;
+        updateGraph();
+    }
+
+    function updateGraph(){
+
+        getRate();
+        getGraph();
+
+    }
+
     var ctx = $("#myChart");
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            datasets: [{
-                data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                lineTension: 0,
-                backgroundColor: 'transparent',
-                borderColor: '#007bff',
-                borderWidth: 4,
-                pointBackgroundColor: '#007bff'
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: false
-                    }
-                }]
-            },
-            legend: {
-                display: false,
-            }
-        }
-    });
-</script>
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script>
+    ctx.hide();
+    var myChart;
+
     function update_form() {
+        getRate();
+        getGraph();
+        getAllCoins();
+    }
+
+    function getRate() {
+        $.get("getRate/"+cur+"/"+period, function (data, status) {
+            $("#rate").html("");
+            $(data).appendTo("#rate");
+        });
+    }
+//    https://code.tutsplus.com/tutorials/getting-started-with-chartjs-scales--cms-28477
+    function getGraph() {
+        $.get("getGraph/"+cur+"/"+period, function (data, status) {
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+                    datasets: [{
+                        data: [data[23], data[22], data[21],data[20], data[19], data[18], data[17], data[16], data[15], data[14], data[13], data[12], data[11], data[10], data[9], data[8], data[7], data[6], data[5], data[4], data[3], data[2], data[1], data[0]],
+                        lineTension: 0,
+                        backgroundColor: 'transparent',
+                        borderColor: '#007bff',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#007bff'
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
+        });
+
+        ctx.show(200);
+    }
+
+    function getAllCoins() {
         $.get("getAllCoins", function (data, status) {
             $("#cards").html("");
             $("#cards").hide();
             for (i = 0; i < data.length; i++) {
                 if (data[i].active == 1) {
 
-                    $("<div class=\"card\"><div class=\"card-header\"><img src=\"/image/"+data[i].id+"\" width=\"50\" height=\"50\">"
-                            + "<h4>"+data[i].name+" ("+data[i].title+")</h4></div>"
-                            + "<div class=\"card-body\"><h5 class=\"card-title\">#"+(i+1)+"</h5>"
-                            + "<p class=\"card-text\">"+data[i].description+"</p></div></div><br/>")
-                            .appendTo("#cards");
+                    $("<div class=\"card\"><div class=\"card-header\"><img src=\"/image/" + data[i].id + "\" width=\"50\" height=\"50\">"
+                        + "<h4>" + data[i].name + " (" + data[i].title + ")</h4></div>"
+                        + "<div class=\"card-body\"><h5 class=\"card-title\">#" + (i + 1) + "</h5>"
+                        + "<p class=\"card-text\">" + data[i].description + "</p></div></div><br/>")
+                        .appendTo("#cards");
                 }
             }
             $("#cards").show(500);

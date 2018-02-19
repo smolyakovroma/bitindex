@@ -82,6 +82,9 @@
                 <textarea cols="40" rows="3" required class="form-control" id="description"
                           name="description"></textarea>
                 <br/>
+                <label for="nameApi">Name API</label>
+                <input class="form-control" id="nameApi" name="nameApi" required/>
+                <br/>
                 <label for="rank">Rank</label>
                 <input class="form-control" id="rank" name="rank" type="number"
                        required/>
@@ -156,6 +159,7 @@
         $.get("getCoin/" + id, function (data, status) {
             $("#id").val(data.id);
             $("#name").val(data.name);
+            $("#nameApi").val(data.nameApi);
             $("#title").val(data.title);
             $("#description").val(data.description);
             $("#rank").val(data.rank);
@@ -166,7 +170,7 @@
 
     function show(id) {
         pos = id;
-        $('#coin').modal('show');
+        $('#infoModal').modal('show');
     }
 
     function confirm() {
@@ -179,7 +183,6 @@
     }
 
     function getAllCoins() {
-        console.log("update");
         $.get("getAllCoins", function (data, status) {
             $("#tb").html("");
             for (i = 0; i < data.length; i++) {
@@ -242,7 +245,8 @@
                 title: $("#title").val(),
                 description: $("#description").val(),
                 rank: $("#rank").val(),
-                active: $("#active").val()
+                active: $("#active").val(),
+                nameApi: $("#nameApi").val()
             },
             function (data, status) {
                 getAllCoins();
@@ -250,8 +254,10 @@
     }
 
     function update_form() {
+
         getAllCoins();
     }
+
 
     function add() {
         $("#id").val(0);
@@ -260,6 +266,7 @@
         $("#description").val("");
         $("#rank").val("");
         $("#active").val(1);
+        $("#nameApi").val("");
         $('#coin').modal('show');
     }
 </script>

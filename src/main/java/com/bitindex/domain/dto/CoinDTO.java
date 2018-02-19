@@ -1,5 +1,7 @@
 package com.bitindex.domain.dto;
 
+import com.bitindex.domain.Coin;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -11,6 +13,8 @@ import java.math.BigDecimal;
 @Setter
 public class CoinDTO {
 
+    @JsonIgnore
+    private Coin coin;
     @JsonProperty("id")
     private String id;
     private String name;
@@ -18,6 +22,7 @@ public class CoinDTO {
     private int rank;
     private double price_usd;
     private double price_btc;
+    private double price_rub;
     @JsonProperty("24h_volume_usd")
     private BigDecimal volume_usd;
     private BigDecimal market_cap_usd;

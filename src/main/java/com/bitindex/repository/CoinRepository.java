@@ -9,4 +9,6 @@ import java.util.List;
 public interface CoinRepository extends JpaRepository<Coin, Integer> {
 
     List<Coin> findAllByOrderByRankAsc();
+
+    Coin findByNameApi(String nameApi);
 }

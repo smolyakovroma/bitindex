@@ -21,9 +21,6 @@ public class MainController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
-        RestTemplate restTemplate = new RestTemplate();
-        CoinDTO[] coins = restTemplate.getForObject("https://api.coinmarketcap.com/v1/ticker/{coin}/?convert=USD", CoinDTO[].class, "bitcoin");
-        System.out.println(coins[0].getName());
         return modelAndView;
     }
 

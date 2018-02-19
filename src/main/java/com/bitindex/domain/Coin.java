@@ -18,6 +18,8 @@ public class Coin {
     @Column(name = "id")
     private int id;
     private String name;
+    @Column(name = "name_api")
+    private String nameApi;
     private String title;
     @Column(length = 10000)
     private String description;
@@ -25,5 +27,7 @@ public class Coin {
     private int active;
     @Lob
     private byte[] pic;
+
+
 
 }
